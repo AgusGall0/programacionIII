@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deportes Unca - Inscripción</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600&amp;family=Barlow:wght@400;600&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../CSS/estilos.css">
+</head>
+<body>
+
+    <header class="encabezado">
+        <div class="container">
+            <img src="../IMG/logo-deportes-unca.svg" alt="Logo de Deportes Unca" class="logo">
+            <div>
+                <h1>Deportes Unca</h1>
+                <h2>Inscripción a una actividad deportiva</h2>
+            </div>
+        </div>
+    </header>
+
+    <nav id="menu-principal" class="menu-principal">
+        <div class="container-fluid">
+            <ul>
+                <li><a href="pagina1.html">Inicio</a></li>
+                <li><a href="#">Registrarse</a></li>
+                <li><a href="pagina1.html#actividades">Actividades deportivas</a></li>
+                <li><a href="pagina2.html">Inscribirse a una actividad</a></li>
+                <li><a href="inscripciones.html">Mis inscripciones</a></li>
+                <li><a href="inscripciones.html">Cancelar inscripción</a></li>
+                <li><a href="#">Iniciar sesión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section>
+            <h2>Formulario de inscripción</h2>
+
+            <form id="formulario-inscripcion" action="pagina3.html" method="post">
+
+                <fieldset>
+                    <legend>Información de la actividad</legend>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="campo">
+                                <label for="actividad">Actividad:</label>
+                                <input type="text" id="actividad" name="actividad" value="Fútbol" disabled>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="campo">
+                                <label for="lugar">Lugar:</label>
+                                <input type="text" id="lugar" name="lugar" value="Cancha techada" disabled>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="campo">
+                                <label for="dia">Día:</label>
+                                <input type="text" id="dia" name="dia" value="Martes y jueves" disabled>
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="campo">
+                                <label for="horario">Horario:</label>
+                                <input type="text" id="horario" name="horario" value="18:00 - 19:30" disabled>
+                            </p>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Datos del participante</legend>
+
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p class="campo">
+                                <label for="apellido_nombre">Apellido y nombre:</label>
+                                <input type="text" id="apellido_nombre" name="apellido_nombre"
+                                       maxlength="100" required>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="campo">
+                                <label for="dni">DNI:</label>
+                                <input type="number" id="dni" name="dni"
+                                       min="10000000" max="99999999" required>
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="campo">
+                                <label for="fecha_nacimiento">Fecha de nacimiento:</label>
+                                <input type="date" id="fecha_nacimiento" name="fecha_nacimiento">
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="campo">
+                                <label for="correo">Correo electrónico:</label>
+                                <input type="email" id="correo" name="correo">
+                            </p>
+                        </div>
+                        <div class="col-md-4">
+                            <p class="campo">
+                                <label for="telefono">Teléfono:</label>
+                                <input type="tel" id="telefono" name="telefono">
+                            </p>
+                        </div>
+                    </div>
+
+                    <fieldset>
+                        <legend>Sexo</legend>
+                        <div class="grupo-opciones">
+                            <span class="opcion">
+                                <input type="radio" id="sexo_femenino" name="sexo" value="femenino">
+                                <label for="sexo_femenino">Femenino</label>
+                            </span>
+                            <span class="opcion">
+                                <input type="radio" id="sexo_masculino" name="sexo" value="masculino">
+                                <label for="sexo_masculino">Masculino</label>
+                            </span>
+                            <span class="opcion">
+                                <input type="radio" id="sexo_no_binario" name="sexo" value="no_binario">
+                                <label for="sexo_no_binario">No binario</label>
+                            </span>
+                        </div>
+                    </fieldset>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Información deportiva</legend>
+
+                    <div class="row">
+                        <div class="col-md-5">
+                            <p class="campo">
+                                <label for="nivel">Nivel:</label>
+                                <select id="nivel" name="nivel">
+                                    <option value="inicial">Inicial</option>
+                                    <option value="intermedio">Intermedio</option>
+                                    <option value="avanzado">Avanzado</option>
+                                </select>
+                            </p>
+                        </div>
+                    </div>
+
+                    <fieldset>
+                        <legend>¿Posee experiencia previa?</legend>
+                        <div class="grupo-opciones">
+                            <span class="opcion">
+                                <input type="radio" id="experiencia_si" name="experiencia" value="si">
+                                <label for="experiencia_si">Sí</label>
+                            </span>
+                            <span class="opcion">
+                                <input type="radio" id="experiencia_no" name="experiencia" value="no">
+                                <label for="experiencia_no">No</label>
+                            </span>
+                        </div>
+                    </fieldset>
+
+                    <p class="campo">
+                        <label for="observaciones">Observaciones:</label>
+                        <textarea id="observaciones" name="observaciones" rows="4"
+                                  placeholder="Agregue información adicional..."></textarea>
+                    </p>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Aceptación de condiciones</legend>
+                    <span class="opcion">
+                        <input type="checkbox" id="acepta_condiciones" name="acepta_condiciones" required>
+                        <label for="acepta_condiciones">Acepto las condiciones de inscripción</label>
+                    </span>
+                </fieldset>
+
+                <p class="acciones">
+                    <button type="submit" class="boton boton-primario">Aceptar</button>
+                    <button type="reset" class="boton boton-secundario">Cancelar</button>
+                </p>
+
+            </form>
+        </section>
+    </main>
+
+    <footer class="pie">
+        <div class="container">
+            <p>Deportes Unca &ndash; 2026</p>
+        </div>
+    </footer>
+
+</body>
+</html>
