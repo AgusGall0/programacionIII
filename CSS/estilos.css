@@ -205,7 +205,8 @@ main section > h2 {
     outline-offset: 2px;
 }
 
-.tabla-inscripciones {
+.tabla-inscripciones,
+#tablaActividades {
     width: 100%;
     background-color: var(--papel);
     border-collapse: collapse;
@@ -220,7 +221,8 @@ main section > h2 {
     text-align: left;
 }
 
-.tabla-inscripciones thead th {
+.tabla-inscripciones thead th,
+#tablaActividades thead th {
     background-color: var(--tinta);
     color: var(--lienzo);
     font-family: 'Barlow Condensed', sans-serif;
@@ -230,16 +232,19 @@ main section > h2 {
     padding: 0.65rem 0.85rem;
 }
 
-.tabla-inscripciones td {
+.tabla-inscripciones td,
+#tablaActividades td {
     padding: 0.7rem 0.85rem;
     border-top: 1px solid var(--linea);
 }
 
-.tabla-inscripciones tbody tr:nth-child(even) {
+.tabla-inscripciones tbody tr:nth-child(even),
+#tablaActividades tbody tr:nth-child(even) {
     background-color: #F7F9F7;
 }
 
-.tabla-inscripciones tbody tr:hover {
+.tabla-inscripciones tbody tr:hover,
+#tablaActividades tbody tr:hover {
     background-color: #EAF2ED;
 }
 
@@ -424,7 +429,8 @@ textarea {
         font-size: 1.5rem;
     }
 
-    .tabla-inscripciones {
+    .tabla-inscripciones,
+    #tablaActividades {
         display: block;
         overflow-x: auto;
     }
