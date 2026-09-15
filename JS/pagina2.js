@@ -29,14 +29,46 @@ function validarFechaNacimiento(campoFecha) {
     }
 }
 
+// Ejercicio 2: verifica que el DNI tenga exactamente 8 dígitos.
+// Devuelve true si el DNI es válido y false si no lo es.
+function validarDni(campoDni) {
+    const dni = campoDni.value;
+    let esValido = true;
+
+    // Tiene que tener exactamente 8 caracteres
+    if (dni.length !== 8) {
+        esValido = false;
+    }
+
+    // Cada caracter tiene que ser un número del 0 al 9
+    for (let i = 0; i < dni.length; i++) {
+        if (dni[i] < "0" || dni[i] > "9") {
+            esValido = false;
+        }
+    }
+
+    if (esValido) {
+        mostrarError(campoDni, "");
+    } else {
+        mostrarError(campoDni, "El DNI debe contener 8 dígitos");
+    }
+    return esValido;
+}
+
 // ===== Validaciones del formulario de inscripción =====
 
 const formulario = document.getElementById("formulario-inscripcion");
 const campoFechaNacimiento = document.getElementById("fecha_nacimiento");
+const campoDni = document.getElementById("dni");
 
 // Valida la fecha cada vez que el usuario la cambia
 campoFechaNacimiento.addEventListener("change", function () {
     validarFechaNacimiento(campoFechaNacimiento);
+});
+
+// Valida el DNI cada vez que el usuario lo cambia
+campoDni.addEventListener("change", function () {
+    validarDni(campoDni);
 });
 
 // Antes de enviar se vuelve a validar y, si hay errores, se cancela el envío
@@ -44,6 +76,10 @@ formulario.addEventListener("submit", function (evento) {
     let formularioValido = true;
 
     if (!validarFechaNacimiento(campoFechaNacimiento)) {
+        formularioValido = false;
+    }
+
+    if (!validarDni(campoDni)) {
         formularioValido = false;
     }
 
