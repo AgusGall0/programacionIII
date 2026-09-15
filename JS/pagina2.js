@@ -83,7 +83,143 @@ formulario.addEventListener("submit", function (evento) {
         formularioValido = false;
     }
 
+    // También se validan los campos de los participantes generados
+    const dnisParticipantes = document.getElementsByClassName("dni-participante");
+    for (let i = 0; i < dnisParticipantes.length; i++) {
+        if (!validarDni(dnisParticipantes[i])) {
+            formularioValido = false;
+        }
+    }
+
+    const fechasParticipantes = document.getElementsByClassName("fecha-participante");
+    for (let i = 0; i < fechasParticipantes.length; i++) {
+        if (!validarFechaNacimiento(fechasParticipantes[i])) {
+            formularioValido = false;
+        }
+    }
+
     if (!formularioValido) {
         evento.preventDefault();
+    }
+});
+
+// ===== Ejercicio 5: generación dinámica de participantes =====
+
+// Crea una columna con la etiqueta, el campo y el span para el mensaje de error
+function crearCampo(textoEtiqueta, campo, claseColumna) {
+    const columna = document.createElement("div");
+    columna.className = claseColumna;
+
+    const parrafo = document.createElement("p");
+    parrafo.className = "campo";
+
+    const etiqueta = document.createElement("label");
+    etiqueta.htmlFor = campo.id;
+    etiqueta.textContent = textoEtiqueta;
+
+    const error = document.createElement("span");
+    error.id = "error_" + campo.id;
+    error.className = "mensaje-error";
+
+    parrafo.appendChild(etiqueta);
+    parrafo.appendChild(campo);
+    parrafo.appendChild(error);
+    columna.appendChild(parrafo);
+    return columna;
+}
+
+// Agrega una opción (option) a una lista desplegable (select)
+function agregarOpcion(lista, valor, texto) {
+    const opcion = document.createElement("option");
+    opcion.value = valor;
+    opcion.textContent = texto;
+    lista.appendChild(opcion);
+}
+
+// Crea el bloque completo de un participante con todos sus campos
+function crearBloqueParticipante(numero) {
+    const bloque = document.createElement("fieldset");
+
+    const titulo = document.createElement("legend");
+    titulo.textContent = "Participante " + numero;
+    bloque.appendChild(titulo);
+
+    const fila = document.createElement("div");
+    fila.className = "row";
+
+    // Apellido y nombre
+    const campoNombre = document.createElement("input");
+    campoNombre.type = "text";
+    campoNombre.id = "apellido_nombre_participante_" + numero;
+    campoNombre.name = "apellido_nombre_participante_" + numero;
+    campoNombre.maxLength = 100;
+    campoNombre.required = true;
+    fila.appendChild(crearCampo("Apellido y nombre:", campoNombre, "col-md-8"));
+
+    // DNI, con la validación del ejercicio 2
+    const campoDniParticipante = document.createElement("input");
+    campoDniParticipante.type = "number";
+    campoDniParticipante.id = "dni_participante_" + numero;
+    campoDniParticipante.name = "dni_participante_" + numero;
+    campoDniParticipante.className = "dni-participante";
+    campoDniParticipante.required = true;
+    campoDniParticipante.addEventListener("change", function () {
+        validarDni(campoDniParticipante);
+    });
+    fila.appendChild(crearCampo("DNI:", campoDniParticipante, "col-md-4"));
+
+    // Fecha de nacimiento, con la validación del ejercicio 1
+    const campoFecha = document.createElement("input");
+    campoFecha.type = "date";
+    campoFecha.id = "fecha_nacimiento_participante_" + numero;
+    campoFecha.name = "fecha_nacimiento_participante_" + numero;
+    campoFecha.className = "fecha-participante";
+    campoFecha.addEventListener("change", function () {
+        validarFechaNacimiento(campoFecha);
+    });
+    fila.appendChild(crearCampo("Fecha de nacimiento:", campoFecha, "col-md-4"));
+
+    // Sexo
+    const campoSexo = document.createElement("select");
+    campoSexo.id = "sexo_participante_" + numero;
+    campoSexo.name = "sexo_participante_" + numero;
+    agregarOpcion(campoSexo, "femenino", "Femenino");
+    agregarOpcion(campoSexo, "masculino", "Masculino");
+    agregarOpcion(campoSexo, "no_binario", "No binario");
+    fila.appendChild(crearCampo("Sexo:", campoSexo, "col-md-4"));
+
+    // Nivel
+    const campoNivel = document.createElement("select");
+    campoNivel.id = "nivel_participante_" + numero;
+    campoNivel.name = "nivel_participante_" + numero;
+    agregarOpcion(campoNivel, "inicial", "Inicial");
+    agregarOpcion(campoNivel, "intermedio", "Intermedio");
+    agregarOpcion(campoNivel, "avanzado", "Avanzado");
+    fila.appendChild(crearCampo("Nivel:", campoNivel, "col-md-4"));
+
+    bloque.appendChild(fila);
+    return bloque;
+}
+
+const campoCantidad = document.getElementById("cantidadParticipantes");
+const botonGenerar = document.getElementById("botonGenerar");
+const contenedorParticipantes = document.getElementById("contenedorParticipantes");
+
+// Al presionar el botón se generan los bloques de participantes
+botonGenerar.addEventListener("click", function () {
+    const cantidad = Number(campoCantidad.value);
+
+    if (cantidad < 1 || cantidad > 10) {
+        alert("Ingrese una cantidad de participantes entre 1 y 10");
+    } else {
+        // Se borran los bloques que se hayan generado antes
+        while (contenedorParticipantes.firstChild) {
+            contenedorParticipantes.removeChild(contenedorParticipantes.firstChild);
+        }
+
+        // Se crea un bloque por cada participante
+        for (let i = 1; i <= cantidad; i++) {
+            contenedorParticipantes.appendChild(crearBloqueParticipante(i));
+        }
     }
 });
