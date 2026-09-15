@@ -339,6 +339,13 @@ textarea {
     resize: vertical;
 }
 
+.mensaje-error {
+    display: block;
+    margin-top: 0.25rem;
+    color: var(--senal);
+    font-size: 0.85rem;
+}
+
 .grupo-opciones {
     display: flex;
     flex-wrap: wrap;
