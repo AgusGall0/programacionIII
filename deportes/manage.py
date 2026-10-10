@@ -15,6 +15,11 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+
+    # Los puertos 8000 y 8001 están ocupados: runserver usa el 8002 por defecto
+    from django.core.management.commands.runserver import Command as runserver
+    runserver.default_port = '8002'
+
     execute_from_command_line(sys.argv)
 
 

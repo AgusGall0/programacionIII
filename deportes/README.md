@@ -56,4 +56,6 @@ cd deportes
 python manage.py runserver
 ```
 
-Luego abrir <http://127.0.0.1:8000/> en el navegador: se muestra la página de bienvenida de Django.
+Luego abrir <http://127.0.0.1:8002/> en el navegador: se muestra la página de bienvenida de Django.
+
+> Como los puertos 8000 y 8001 están ocupados, `manage.py` cambia el puerto por defecto de `runserver` a **8002**. Para usar otro: `python manage.py runserver 8003`.
