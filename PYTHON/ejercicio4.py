@@ -26,5 +26,94 @@ o Viento
 o Cuerda
 """
 
+TIPOS = ["Percusión", "Viento", "Cuerda"]
+
+sucursales = [
+    {
+        "nombre": "Centro",
+        "instrumentos": [
+            {"id": "P001", "precio": 85000, "tipo": "Percusión"},
+            {"id": "V001", "precio": 42000, "tipo": "Viento"},
+            {"id": "C001", "precio": 120000, "tipo": "Cuerda"},
+            {"id": "C002", "precio": 95000, "tipo": "Cuerda"},
+        ],
+    },
+    {
+        "nombre": "Norte",
+        "instrumentos": [
+            {"id": "P002", "precio": 60000, "tipo": "Percusión"},
+            {"id": "V002", "precio": 38000, "tipo": "Viento"},
+            {"id": "V003", "precio": 51000, "tipo": "Viento"},
+        ],
+    },
+]
 
 
+def listarInstrumentos():
+    for sucursal in sucursales:
+        for instrumento in sucursal["instrumentos"]:
+            print(f"Sucursal: {sucursal['nombre']} - ID: {instrumento['id']} - "
+                  f"Precio: ${instrumento['precio']} - Tipo: {instrumento['tipo']}")
+
+
+def instrumentosPorTipo(tipo):
+    lista = []
+    for sucursal in sucursales:
+        for instrumento in sucursal["instrumentos"]:
+            if instrumento["tipo"] == tipo:
+                lista.append(instrumento)
+    return lista
+
+
+def borrarInstrumento(id):
+    for sucursal in sucursales:
+        for instrumento in sucursal["instrumentos"]:
+            if instrumento["id"] == id:
+                sucursal["instrumentos"].remove(instrumento)
+                return True
+    return False
+
+
+def porcInstrumentosPorTipo(nombreSucursal):
+    for sucursal in sucursales:
+        if sucursal["nombre"] == nombreSucursal:
+            instrumentos = sucursal["instrumentos"]
+            porcentajes = {}
+            for tipo in TIPOS:
+                cantidad = 0
+                for instrumento in instrumentos:
+                    if instrumento["tipo"] == tipo:
+                        cantidad += 1
+                if len(instrumentos) > 0:
+                    porcentajes[tipo] = cantidad * 100 / len(instrumentos)
+                else:
+                    porcentajes[tipo] = 0
+            return porcentajes
+    return None
+
+
+def main():
+    print("Listado de instrumentos:")
+    listarInstrumentos()
+
+    print("\nInstrumentos de Viento:")
+    for instrumento in instrumentosPorTipo("Viento"):
+        print(instrumento)
+
+    print("\nBorrando el instrumento C002...")
+    if borrarInstrumento("C002"):
+        print("Instrumento borrado")
+    else:
+        print("No se encontró el instrumento")
+    listarInstrumentos()
+
+    print("\nPorcentaje de instrumentos por tipo en la sucursal Centro:")
+    porcentajes = porcInstrumentosPorTipo("Centro")
+    if porcentajes is None:
+        print("La sucursal no existe")
+    else:
+        for tipo, porcentaje in porcentajes.items():
+            print(f"{tipo}: {porcentaje:.2f}%")
+
+
+main()
