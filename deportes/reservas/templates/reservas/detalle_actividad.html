@@ -1,0 +1,53 @@
+{% extends 'reservas/base.html' %}
+
+{% block titulo %}{{ actividad.nombre }}{% endblock %}
+
+{% block contenido %}
+<article class="detalle">
+    <header>
+        <p class="volver"><a href="{% url 'reservas:lista_actividades' %}">&larr; Volver a actividades</a></p>
+        <h1>{{ actividad.nombre }}</h1>
+    </header>
+
+    <section>
+        <h2>Descripción</h2>
+        <p>{{ actividad.descripcion|default:"Sin descripción." }}</p>
+    </section>
+
+    <section>
+        <h2>Datos de la actividad</h2>
+        <dl class="datos">
+            <dt>Lugar</dt>
+            <dd>{{ actividad.lugar }}</dd>
+            <dt>Cupo</dt>
+            <dd>{{ actividad.cupo }} participante{{ actividad.cupo|pluralize }}</dd>
+        </dl>
+    </section>
+
+    <section>
+        <h2>Horarios</h2>
+        {% if horarios %}
+        <table>
+            <thead>
+                <tr>
+                    <th scope="col">Día</th>
+                    <th scope="col">Inicio</th>
+                    <th scope="col">Fin</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for horario in horarios %}
+                <tr>
+                    <td>{{ horario.get_dia_display }}</td>
+                    <td><time>{{ horario.hora_inicio|time:"H:i" }}</time></td>
+                    <td><time>{{ horario.hora_fin|time:"H:i" }}</time></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="vacio">Esta actividad todavía no tiene horarios cargados.</p>
+        {% endif %}
+    </section>
+</article>
+{% endblock %}
