@@ -1,0 +1,37 @@
+{% extends 'reservas/base.html' %}
+
+{% block titulo %}Agregar actividad{% endblock %}
+
+{% block contenido %}
+<section class="formulario">
+    <header>
+        <h1>Agregar actividad deportiva</h1>
+        <p>Completá los datos para registrar una nueva actividad en la plataforma.</p>
+    </header>
+
+    <form method="post" action="{% url 'reservas:agregar_actividad' %}" novalidate>
+        {% csrf_token %}
+        {% for error in form.non_field_errors %}
+        <p class="mensaje mensaje-error">{{ error }}</p>
+        {% endfor %}
+
+        <fieldset>
+            <legend>Datos de la actividad</legend>
+            {% for campo in form %}
+            <div class="campo{% if campo.errors %} con-error{% endif %}">
+                <label for="{{ campo.id_for_label }}">{{ campo.label }}{% if campo.field.required %} *{% endif %}</label>
+                {{ campo }}
+                {% for error in campo.errors %}
+                <p class="error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </fieldset>
+
+        <p class="acciones">
+            <button type="submit" class="boton">Guardar actividad</button>
+            <a href="{% url 'reservas:lista_actividades' %}">Ver actividades</a>
+        </p>
+    </form>
+</section>
+{% endblock %}
