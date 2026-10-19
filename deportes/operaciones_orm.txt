@@ -1,0 +1,180 @@
+TRABAJO PRACTICO N° VI - MODELOS EN DJANGO
+Proyecto: deportes - Aplicacion: reservas
+
+MIGRACIONES
+
+1. Generar las migraciones
+
+$ python manage.py makemigrations reservas
+Migrations for 'reservas':
+  reservas\migrations\0001_initial.py
+    + Create model ActividadDeportiva
+    + Create model Horario
+    + Create model Inscripcion
+    + Create constraint hora_fin_posterior_a_hora_inicio on model horario
+    + Create constraint horario_unico_por_actividad on model horario
+    + Create constraint inscripcion_unica_por_horario on model inscripcion
+
+2. Aplicar las migraciones
+
+$ python manage.py migrate
+Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, reservas, sessions
+Running migrations:
+  Applying contenttypes.0001_initial... OK
+  Applying auth.0001_initial... OK
+  Applying admin.0001_initial... OK
+  Applying admin.0002_logentry_remove_auto_add... OK
+  Applying admin.0003_logentry_add_action_flag_choices... OK
+  Applying contenttypes.0002_remove_content_type_name... OK
+  Applying auth.0002_alter_permission_name_max_length... OK
+  Applying auth.0003_alter_user_email_max_length... OK
+  Applying auth.0004_alter_user_username_opts... OK
+  Applying auth.0005_alter_user_last_login_null... OK
+  Applying auth.0006_require_contenttypes_0002... OK
+  Applying auth.0007_alter_validators_add_error_messages... OK
+  Applying auth.0008_alter_user_username_max_length... OK
+  Applying auth.0009_alter_user_last_name_max_length... OK
+  Applying auth.0010_alter_group_name_max_length... OK
+  Applying auth.0011_update_proxy_permissions... OK
+  Applying auth.0012_alter_user_first_name_max_length... OK
+  Applying reservas.0001_initial... OK
+  Applying sessions.0001_initial... OK
+
+3. Verificar que las tablas se hayan creado correctamente
+
+$ python manage.py showmigrations reservas
+reservas
+ [X] 0001_initial
+
+$ python manage.py dbshell
+sqlite> .tables
+auth_group                   django_content_type        
+auth_group_permissions       django_migrations          
+auth_permission              django_session             
+auth_user                    reservas_actividaddeportiva
+auth_user_groups             reservas_horario           
+auth_user_user_permissions   reservas_inscripcion       
+django_admin_log           
+sqlite> .schema reservas_actividaddeportiva
+CREATE TABLE IF NOT EXISTS "reservas_actividaddeportiva" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nombre" varchar(100) NOT NULL UNIQUE, "descripcion" text NOT NULL, "lugar" varchar(150) NOT NULL, "cupo" integer unsigned NOT NULL CHECK ("cupo" >= 0));
+sqlite> .schema reservas_horario
+CREATE TABLE IF NOT EXISTS "reservas_horario" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "dia" varchar(3) NOT NULL, "hora_inicio" time NOT NULL, "hora_fin" time NOT NULL, "actividad_id" bigint NOT NULL REFERENCES "reservas_actividaddeportiva" ("id") DEFERRABLE INITIALLY DEFERRED, CONSTRAINT "hora_fin_posterior_a_hora_inicio" CHECK ("hora_fin" > ("hora_inicio")), CONSTRAINT "horario_unico_por_actividad" UNIQUE ("actividad_id", "dia", "hora_inicio"));
+CREATE INDEX "reservas_horario_actividad_id_177b86d2" ON "reservas_horario" ("actividad_id");
+sqlite> .schema reservas_inscripcion
+CREATE TABLE IF NOT EXISTS "reservas_inscripcion" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nombre" varchar(50) NOT NULL, "apellido" varchar(50) NOT NULL, "dni" varchar(8) NOT NULL, "fecha_inscripcion" date NOT NULL, "estado" varchar(9) NOT NULL, "horario_id" bigint NOT NULL REFERENCES "reservas_horario" ("id") DEFERRABLE INITIALLY DEFERRED, CONSTRAINT "inscripcion_unica_por_horario" UNIQUE ("dni", "horario_id"));
+CREATE INDEX "reservas_inscripcion_horario_id_4b768578" ON "reservas_inscripcion" ("horario_id");
+
+OPERACIONES CON EL ORM (python manage.py shell)
+
+1. Crear y guardar al menos tres actividades deportivas
+
+>>> from reservas.models import ActividadDeportiva, Horario, Inscripcion
+>>> from datetime import time
+>>> futbol = ActividadDeportiva(nombre='Fútbol 5', descripcion='Partidos de fútbol en cancha reducida.', lugar='Cancha sintética del Campus', cupo=10)
+>>> futbol.save()
+>>> voley = ActividadDeportiva.objects.create(nombre='Vóley', descripcion='Entrenamiento y partidos de vóley mixto.', lugar='Gimnasio Universitario', cupo=12)
+>>> natacion = ActividadDeportiva.objects.create(nombre='Natación', descripcion='Clases de natación para todos los niveles.', lugar='Natatorio Municipal', cupo=15)
+>>> ActividadDeportiva.objects.count()
+3
+
+2. Crear y guardar al menos dos horarios para una de las actividades deportivas
+
+>>> h1 = Horario(actividad=futbol, dia=Horario.Dia.LUNES, hora_inicio=time(18, 0), hora_fin=time(19, 30))
+>>> h1.save()
+>>> h2 = Horario.objects.create(actividad=futbol, dia=Horario.Dia.MIERCOLES, hora_inicio=time(20, 0), hora_fin=time(21, 30))
+>>> h3 = Horario.objects.create(actividad=voley, dia=Horario.Dia.JUEVES, hora_inicio=time(17, 0), hora_fin=time(18, 30))
+>>> Horario.objects.count()
+3
+
+3. Crear y guardar al menos tres inscripciones asociadas a los horarios disponibles
+
+>>> i1 = Inscripcion(nombre='Juan', apellido='Pérez', dni='40123456', horario=h1)
+>>> i1.full_clean()
+>>> i1.save()
+>>> i2 = Inscripcion.objects.create(nombre='María', apellido='Gómez', dni='41234567', horario=h1)
+>>> i3 = Inscripcion.objects.create(nombre='Lucas', apellido='Díaz', dni='39876543', horario=h2)
+>>> i4 = Inscripcion.objects.create(nombre='Sofía', apellido='Romero', dni='42345678', horario=h3)
+>>> Inscripcion.objects.count()
+4
+
+4. Consultar y mostrar todas las actividades deportivas registradas
+
+>>> ActividadDeportiva.objects.all()
+<QuerySet [<ActividadDeportiva: Fútbol 5>, <ActividadDeportiva: Natación>, <ActividadDeportiva: Vóley>]>
+>>> for a in ActividadDeportiva.objects.all(): print(a.id, a.nombre, '|', a.lugar, '| cupo:', a.cupo)
+... 
+1 Fútbol 5 | Cancha sintética del Campus | cupo: 10
+3 Natación | Natatorio Municipal | cupo: 15
+2 Vóley | Gimnasio Universitario | cupo: 12
+
+5. Consultar y mostrar los horarios correspondientes a una actividad deportiva determinada
+
+>>> actividad = ActividadDeportiva.objects.get(nombre='Fútbol 5')
+>>> actividad.horarios.all()
+<QuerySet [<Horario: Fútbol 5 - Lunes 18:00 a 19:30>, <Horario: Fútbol 5 - Miércoles 20:00 a 21:30>]>
+>>> Horario.objects.filter(actividad__nombre='Fútbol 5')
+<QuerySet [<Horario: Fútbol 5 - Lunes 18:00 a 19:30>, <Horario: Fútbol 5 - Miércoles 20:00 a 21:30>]>
+
+6. Filtrar y mostrar las inscripciones que se encuentren en estado Activa
+
+>>> Inscripcion.objects.filter(estado=Inscripcion.Estado.ACTIVA)
+<QuerySet [<Inscripcion: Díaz, Lucas (39876543) - Fútbol 5 - Miércoles 20:00 a 21:30>, <Inscripcion: Gómez, María (41234567) - Fútbol 5 - Lunes 18:00 a 19:30>, <Inscripcion: Pérez, Juan (40123456) - Fútbol 5 - Lunes 18:00 a 19:30>, <Inscripcion: Romero, Sofía (42345678) - Vóley - Jueves 17:00 a 18:30>]>
+>>> for i in Inscripcion.objects.filter(estado='ACTIVA'): print(i.apellido, i.nombre, i.dni, i.get_estado_display(), i.fecha_inscripcion)
+... 
+Díaz Lucas 39876543 Activa 2026-10-19
+Gómez María 41234567 Activa 2026-10-19
+Pérez Juan 40123456 Activa 2026-10-19
+Romero Sofía 42345678 Activa 2026-10-19
+
+7. Consultar las inscripciones correspondientes a un horario determinado
+
+>>> horario = Horario.objects.get(actividad__nombre='Fútbol 5', dia=Horario.Dia.LUNES)
+>>> horario
+<Horario: Fútbol 5 - Lunes 18:00 a 19:30>
+>>> horario.inscripciones.all()
+<QuerySet [<Inscripcion: Gómez, María (41234567) - Fútbol 5 - Lunes 18:00 a 19:30>, <Inscripcion: Pérez, Juan (40123456) - Fútbol 5 - Lunes 18:00 a 19:30>]>
+>>> Inscripcion.objects.filter(horario=horario).count()
+2
+
+8. Modificar el cupo de una actividad deportiva
+
+>>> voley = ActividadDeportiva.objects.get(nombre='Vóley')
+>>> voley.cupo
+12
+>>> voley.cupo = 16
+>>> voley.save()
+>>> ActividadDeportiva.objects.get(nombre='Vóley').cupo
+16
+>>> ActividadDeportiva.objects.filter(nombre='Natación').update(cupo=20)
+1
+>>> ActividadDeportiva.objects.get(nombre='Natación').cupo
+20
+
+9. Cambiar el estado de una inscripción de Activa a Cancelada
+
+>>> inscripcion = Inscripcion.objects.get(dni='41234567', horario=horario)
+>>> inscripcion.get_estado_display()
+'Activa'
+>>> inscripcion.estado = Inscripcion.Estado.CANCELADA
+>>> inscripcion.save()
+>>> Inscripcion.objects.get(pk=inscripcion.pk).get_estado_display()
+'Cancelada'
+>>> Inscripcion.objects.filter(estado=Inscripcion.Estado.ACTIVA)
+<QuerySet [<Inscripcion: Díaz, Lucas (39876543) - Fútbol 5 - Miércoles 20:00 a 21:30>, <Inscripcion: Pérez, Juan (40123456) - Fútbol 5 - Lunes 18:00 a 19:30>, <Inscripcion: Romero, Sofía (42345678) - Vóley - Jueves 17:00 a 18:30>]>
+>>> Inscripcion.objects.filter(estado=Inscripcion.Estado.CANCELADA)
+<QuerySet [<Inscripcion: Gómez, María (41234567) - Fútbol 5 - Lunes 18:00 a 19:30>]>
+
+10. Eliminar una inscripción de la base de datos
+
+>>> inscripcion = Inscripcion.objects.get(dni='39876543')
+>>> inscripcion
+<Inscripcion: Díaz, Lucas (39876543) - Fútbol 5 - Miércoles 20:00 a 21:30>
+>>> inscripcion.delete()
+(1, {'reservas.Inscripcion': 1})
+>>> Inscripcion.objects.filter(dni='39876543').exists()
+False
+>>> Inscripcion.objects.all()
+<QuerySet [<Inscripcion: Gómez, María (41234567) - Fútbol 5 - Lunes 18:00 a 19:30>, <Inscripcion: Pérez, Juan (40123456) - Fútbol 5 - Lunes 18:00 a 19:30>, <Inscripcion: Romero, Sofía (42345678) - Vóley - Jueves 17:00 a 18:30>]>
+>>> Inscripcion.objects.count()
+3
