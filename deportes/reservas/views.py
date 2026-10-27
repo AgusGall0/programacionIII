@@ -1,15 +1,20 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import ActividadDeportivaForm
 from .models import ActividadDeportiva
 
 
+@login_required
+@permission_required('reservas.view_actividaddeportiva', raise_exception=True)
 def lista_actividades(request):
     actividades = ActividadDeportiva.objects.all()
     return render(request, 'reservas/lista_actividades.html', {'actividades': actividades})
 
 
+@login_required
+@permission_required('reservas.view_actividaddeportiva', raise_exception=True)
 def detalle_actividad(request, actividad_id):
     actividad = get_object_or_404(ActividadDeportiva, pk=actividad_id)
     horarios = actividad.horarios.all()
@@ -19,6 +24,8 @@ def detalle_actividad(request, actividad_id):
     })
 
 
+@login_required
+@permission_required('reservas.add_actividaddeportiva', raise_exception=True)
 def agregar_actividad(request):
     if request.method == 'POST':
         form = ActividadDeportivaForm(request.POST)

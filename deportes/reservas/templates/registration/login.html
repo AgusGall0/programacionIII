@@ -1,0 +1,36 @@
+{% extends 'reservas/base.html' %}
+
+{% block titulo %}Iniciar sesión{% endblock %}
+
+{% block contenido %}
+<section class="formulario acceso">
+    <header>
+        <h1>Iniciar sesión</h1>
+        <p>Ingresá con tu usuario para acceder a las actividades deportivas.</p>
+    </header>
+
+    <form method="post" action="{% url 'login' %}" novalidate>
+        {% csrf_token %}
+        {% if form.errors %}
+        <p class="mensaje mensaje-error">Usuario o contraseña incorrectos.</p>
+        {% endif %}
+
+        <fieldset>
+            <legend>Credenciales</legend>
+            <div class="campo">
+                <label for="{{ form.username.id_for_label }}">Usuario</label>
+                {{ form.username }}
+            </div>
+            <div class="campo">
+                <label for="{{ form.password.id_for_label }}">Contraseña</label>
+                {{ form.password }}
+            </div>
+        </fieldset>
+
+        <input type="hidden" name="next" value="{{ next }}">
+        <p class="acciones">
+            <button type="submit" class="boton">Ingresar</button>
+        </p>
+    </form>
+</section>
+{% endblock %}

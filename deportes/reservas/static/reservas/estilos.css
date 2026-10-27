@@ -288,3 +288,32 @@ legend {
     gap: 1rem;
     margin-top: 1rem;
 }
+
+.sesion {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    color: var(--linea);
+    font-size: 0.95rem;
+}
+
+.boton-enlace {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--cancha);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--papel);
+    font: inherit;
+    cursor: pointer;
+}
+
+.boton-enlace:hover {
+    background-color: var(--cancha-oscura);
+}
+
+.acceso {
+    max-width: 420px;
+    margin: 0 auto;
+}
